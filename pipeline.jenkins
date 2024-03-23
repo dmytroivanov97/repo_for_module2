@@ -17,7 +17,7 @@ pipeline {
         stage('Build docker image') {
             steps{
                 dir('nginx') {
-                    sh 'docker build -t divanoveasytech/my_nginx_app_for_task2:0.2 .'
+                    sh 'docker build -t divanoveasytech/my_nginx_app_for_task2:0.3 .'
                 }
             }
         }
@@ -25,14 +25,14 @@ pipeline {
             steps{
                 withDockerRegistry(credentialsId: 'dockerhub-cred-divanoveasytech', url: 'https://index.docker.io/v1/') {
                     sh '''
-                        docker push divanoveasytech/my_nginx_app_for_task2:0.2
+                        docker push divanoveasytech/my_nginx_app_for_task2:0.3
                     '''
                 }
             }
         }
         stage ('Delete docker image localy') {
             steps{
-                sh 'docker rmi divanoveasytech/my_nginx_app_for_task2:0.2'
+                sh 'docker rmi divanoveasytech/my_nginx_app_for_task2:0.3'
             }
         }
     }
