@@ -1,0 +1,39 @@
+pipeline {
+    agent { label 'ubuntu'}
+
+    stages {
+        stage('Delete workspace before build starts') {
+            steps {
+                echo 'Deleting workspace'
+                deleteDir()
+            }
+        }
+        stage('Clone Git') {
+            steps{
+                git branch: 'master',
+                    url: 'https://github.com/dmytroivanov97/repo_for_module2.git'
+            }
+        }
+        stage('Build docker image') {
+            steps{
+                dir('nginx') {
+                    sh 'docker build -t divanoveasytech/my_nginx_app_for_task2:0.2 .'
+                }
+            }
+        }
+        stage ('Push docker image to DockerHub') {
+            steps{
+                withDockerRegistry(credentialsId: 'dockerhub-cred-divanoveasytech', url: 'https://index.docker.io/v1/') {
+                    sh '''
+                        docker push divanoveasytech/my_nginx_app_for_task2:0.2
+                    '''
+                }
+            }
+        }
+        stage ('Delete docker image localy') {
+            steps{
+                sh 'docker rmi divanoveasytech/my_nginx_app_for_task2:0.2'
+            }
+        }
+    }
+}
